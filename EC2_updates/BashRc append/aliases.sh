@@ -1,0 +1,5 @@
+alias c='clear'
+alias ..='cd ..'
+alias la='ls -a'
+alias ll='ls -la'
+alias myip='curl ifconfig.me' 

@@ -1,0 +1,87 @@
+---
+- name: Update Amazon Linux instances
+  hosts: ec2_instances
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Gather minimal facts
+      setup:
+        gather_subset:
+          - hardware
+          - network
+
+    - name: Check for latest Amazon Linux release
+      shell: |
+        dnf_output=$(dnf check-release-update)
+        echo "$dnf_output"
+        latest_version=$(echo "$dnf_output" | grep -oP '(?<=Version )\d+\.\d+\.\d+\.\d+' | tail -n 1)
+        echo "Latest version: $latest_version"
+      register: release_check
+
+    - name: Print the raw dnf check-release-update output
+      debug:
+        msg: "Raw dnf check-release-update output: {{ release_check.stdout }}"
+
+    - name: Parse the latest version from dnf output
+      set_fact:
+        latest_version: "{{ release_check.stdout | regex_search('Version (\\d+\\.\\d+\\.\\d+\\.\\d+)', '\\1') | last }}"
+
+    - name: Print the latest Amazon Linux release
+      debug:
+        msg: "Latest Amazon Linux release is: {{ latest_version }}"
+
+    - name: Start upgrade to the latest release
+      shell: |
+        latest_version="{{ latest_version }}"
+        nohup dnf -y upgrade --releasever=$latest_version > /tmp/upgrade.log 2>&1 &
+        echo $! > /tmp/upgrade.pid
+      async: 3600
+      poll: 0
+      when: latest_version != ""
+
+    - name: Poll upgrade progress
+      shell: |
+        if [ -f /tmp/upgrade.pid ]; then
+          tail -n 10 /tmp/upgrade.log
+        else
+          echo "Upgrade process not found."
+        fi
+      register: upgrade_progress
+      until: upgrade_task.finished
+      retries: 360
+      delay: 10
+
+    - name: Print upgrade progress
+      debug:
+        msg: "{{ upgrade_progress.stdout }}"
+      when: not upgrade_task.finished
+      loop_control:
+        label: "Upgrade progress update"
+
+    - name: Wait for upgrade to complete
+      async_status:
+        jid: "{{ upgrade_task.ansible_job_id }}"
+      register: job_result
+      until: job_result.finished
+      retries: 1
+      delay: 10
+
+    - name: Check upgrade log
+      shell: cat /tmp/upgrade.log
+      register: upgrade_log
+      when: job_result.finished
+
+    - name: Print upgrade log
+      debug:
+        msg: "{{ upgrade_log.stdout }}"
+      when: job_result.finished
+
+    - name: Run regular upgrade
+      yum:
+        name: '*'
+        state: latest
+
+    - name: Print completion message
+      debug:
+        msg: "All data has been successfully processed and appended to the Google Sheets"
+
