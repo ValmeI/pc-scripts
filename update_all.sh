@@ -37,10 +37,13 @@ else
 fi
 
 # Ensure essential commands are available
-for cmd in "$APT_CMD" "$TIMESHIFT_CMD" "$SNAP_CMD" "$FLATPAK_CMD" "$FWUPD_CMD"; do
+for cmd in "$TIMESHIFT_CMD" "$SNAP_CMD" "$FLATPAK_CMD" "$FWUPD_CMD"; do
   if ! command -v "$cmd" &> /dev/null; then
-    echo -e "$(date) - ${RED}Command $cmd is not available. Installing...${NC}" | tee -a "$LOGFILE"
-    sudo apt-get install "$cmd" -y || { echo -e "${RED}Failed to install $cmd${NC}"; exit 1; }
+    echo -e "$(date) - ${RED}Command $cmd is not available. Trying to install with $APT_CMD...${NC}" | tee -a "$LOGFILE"
+    sudo "$APT_CMD" install "$cmd" -y || { 
+      echo -e "${RED}Failed to install $cmd with $APT_CMD. Attempting with apt-get...${NC}" | tee -a "$LOGFILE"
+      sudo apt-get install "$cmd" -y || { echo -e "${RED}Failed to install $cmd${NC}"; exit 1; }
+    }
   fi
 done
 
