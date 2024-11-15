@@ -47,9 +47,19 @@ for cmd in "$TIMESHIFT_CMD" "$SNAP_CMD" "$FLATPAK_CMD" "$FWUPD_CMD"; do
   fi
 done
 
+# Fix dpkg if interrupted
+echo -e "$(date) - ${YELLOW}Checking for dpkg issues...${NC}" | tee -a "$LOGFILE"
+sudo dpkg --configure -a
+
+# Check for other package managers running
+if sudo fuser /var/lib/dpkg/lock-frontend &>/dev/null || sudo fuser /var/lib/dpkg/lock &>/dev/null; then
+  echo -e "${RED}Another package manager is running. Please close it and try again.${NC}" | tee -a "$LOGFILE"
+  exit 1
+fi
+
 # Perform a Timeshift backup
 echo -e "$(date) - ${YELLOW}Creating a Timeshift backup...${NC}" | tee -a "$LOGFILE"
-sudo "$TIMESHIFT_CMD" --create --comments "Backup before system update" | tee -a "$LOGFILE"
+sudo "$TIMESHIFT_CMD" --create --comments "Backup before system update" 2>>"$LOGFILE" | tee -a "$LOGFILE"
 
 # Check for internet connectivity
 if ! ping -c 1 google.com &> /dev/null; then
@@ -70,13 +80,7 @@ sudo "$APT_CMD" update | tee -a "$LOGFILE"
 
 # Check for package upgrades
 echo -e "$(date) - ${YELLOW}Checking for package upgrades...${NC}" | tee -a "$LOGFILE"
-if [ "$APT_CMD" = "nala" ]; then
-  UPGRADE_SIMULATION=$(sudo nala upgrade -y -s)
-else
-  UPGRADE_SIMULATION=$(sudo apt-get -s upgrade)
-fi
-
-UPGRADE_LIST=$(echo "$UPGRADE_SIMULATION" | grep "^Inst" | awk '{print $2}')
+UPGRADE_LIST=$(apt list --upgradable 2>/dev/null | tail -n +2 | awk -F/ '{print $1}')
 
 if [ -z "$UPGRADE_LIST" ]; then
   echo -e "${BLUE}No Change: No packages need upgrading.${NC}" | tee -a "$LOGFILE"
@@ -143,9 +147,9 @@ fi
 echo -e "$(date) - ${YELLOW}Checking for firmware updates...${NC}" | tee -a "$LOGFILE"
 sudo "$FWUPD_CMD" refresh | tee -a "$LOGFILE"
 
-FWUPD_UPDATES=$(sudo "$FWUPD_CMD" get-updates | grep -A3 'Devices with no available updates' | grep -v 'Devices with no available updates')
+FWUPD_UPDATES=$(sudo "$FWUPD_CMD" get-updates | grep "│ Update")
 
-if sudo "$FWUPD_CMD" get-updates | grep -q "No upgrades for"; then
+if [ -z "$FWUPD_UPDATES" ]; then
   echo -e "${BLUE}No Change: No firmware updates available.${NC}" | tee -a "$LOGFILE"
 else
   echo -e "${GREEN}The following firmware updates are available:${NC}" | tee -a "$LOGFILE"
