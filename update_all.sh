@@ -64,20 +64,30 @@ if [ "$FREE_SPACE" -lt 2097152 ]; then
   exit 1
 fi
 
-# Update and upgrade APT (or Nala) packages
+# Update package list
 echo -e "$(date) - ${YELLOW}Updating package list with $APT_CMD...${NC}" | tee -a "$LOGFILE"
-if sudo "$APT_CMD" update | tee -a "$LOGFILE" | grep -q "All packages are up to date"; then
-  echo -e "${BLUE}No Change: Package list is already up to date.${NC}" | tee -a "$LOGFILE"
+sudo "$APT_CMD" update | tee -a "$LOGFILE"
+
+# Check for package upgrades
+echo -e "$(date) - ${YELLOW}Checking for package upgrades...${NC}" | tee -a "$LOGFILE"
+if [ "$APT_CMD" = "nala" ]; then
+  UPGRADE_SIMULATION=$(sudo nala upgrade -y -s)
 else
-  echo -e "${GREEN}Package list updated successfully.${NC}" | tee -a "$LOGFILE"
+  UPGRADE_SIMULATION=$(sudo apt-get -s upgrade)
 fi
 
-echo -e "$(date) - ${YELLOW}Upgrading packages with $APT_CMD...${NC}" | tee -a "$LOGFILE"
-if sudo "$APT_CMD" upgrade -y | tee -a "$LOGFILE" | grep -q "0 upgraded, 0 newly installed"; then
-  echo -e "${BLUE}No Change: No packages needed upgrading.${NC}" | tee -a "$LOGFILE"
+UPGRADE_LIST=$(echo "$UPGRADE_SIMULATION" | grep "^Inst" | awk '{print $2}')
+
+if [ -z "$UPGRADE_LIST" ]; then
+  echo -e "${BLUE}No Change: No packages need upgrading.${NC}" | tee -a "$LOGFILE"
 else
-  echo -e "${GREEN}Packages upgraded successfully.${NC}" | tee -a "$LOGFILE"
+  echo -e "${GREEN}The following packages will be upgraded:${NC}" | tee -a "$LOGFILE"
+  echo "$UPGRADE_LIST" | tee -a "$LOGFILE"
 fi
+
+# Upgrade packages
+echo -e "$(date) - ${YELLOW}Upgrading packages with $APT_CMD...${NC}" | tee -a "$LOGFILE"
+sudo "$APT_CMD" upgrade -y | tee -a "$LOGFILE"
 
 # Perform full upgrade (includes package removals and new dependencies)
 echo -e "$(date) - ${YELLOW}Performing full upgrade...${NC}" | tee -a "$LOGFILE"
@@ -93,33 +103,57 @@ if [ "$APT_CMD" = "apt-get" ]; then
   sudo "$APT_CMD" autoclean -y | tee -a "$LOGFILE"
 fi
 
-# Refresh Snap packages
-echo -e "$(date) - ${YELLOW}Refreshing Snap packages...${NC}" | tee -a "$LOGFILE"
-if sudo "$SNAP_CMD" refresh | tee -a "$LOGFILE" | grep -q "All snaps up to date"; then
+# Check for Snap package updates
+echo -e "$(date) - ${YELLOW}Checking for Snap package updates...${NC}" | tee -a "$LOGFILE"
+SNAP_UPGRADE_LIST=$(sudo "$SNAP_CMD" refresh --list | tail -n +2)
+
+if [ -z "$SNAP_UPGRADE_LIST" ]; then
   echo -e "${BLUE}No Change: All Snap packages are up to date.${NC}" | tee -a "$LOGFILE"
 else
+  echo -e "${GREEN}The following Snap packages will be upgraded:${NC}" | tee -a "$LOGFILE"
+  echo "$SNAP_UPGRADE_LIST" | tee -a "$LOGFILE"
+
+  # Refresh Snap packages
+  echo -e "$(date) - ${YELLOW}Refreshing Snap packages...${NC}" | tee -a "$LOGFILE"
+  sudo "$SNAP_CMD" refresh | tee -a "$LOGFILE"
   echo -e "${GREEN}Snap packages updated successfully.${NC}" | tee -a "$LOGFILE"
 fi
 
 # Check and update Flatpak packages if available
 if command -v "$FLATPAK_CMD" &> /dev/null; then
-  echo -e "$(date) - ${YELLOW}Updating Flatpak packages...${NC}" | tee -a "$LOGFILE"
-  if "$FLATPAK_CMD" update -y | tee -a "$LOGFILE" | grep -q "Nothing to do"; then
+  echo -e "$(date) - ${YELLOW}Checking for Flatpak package updates...${NC}" | tee -a "$LOGFILE"
+  FLATPAK_UPGRADE_LIST=$("$FLATPAK_CMD" remote-ls --updates)
+
+  if [ -z "$FLATPAK_UPGRADE_LIST" ]; then
     echo -e "${BLUE}No Change: All Flatpak packages are up to date.${NC}" | tee -a "$LOGFILE"
   else
+    echo -e "${GREEN}The following Flatpak packages will be upgraded:${NC}" | tee -a "$LOGFILE"
+    echo "$FLATPAK_UPGRADE_LIST" | tee -a "$LOGFILE"
+
+    # Update Flatpak packages
+    echo -e "$(date) - ${YELLOW}Updating Flatpak packages...${NC}" | tee -a "$LOGFILE"
+    "$FLATPAK_CMD" update -y | tee -a "$LOGFILE"
     echo -e "${GREEN}Flatpak packages updated successfully.${NC}" | tee -a "$LOGFILE"
   fi
 else
   echo -e "$(date) - ${YELLOW}Flatpak is not installed, skipping Flatpak updates.${NC}" | tee -a "$LOGFILE"
 fi
 
-# Update system firmware
-echo -e "$(date) - ${YELLOW}Updating system firmware...${NC}" | tee -a "$LOGFILE"
+# Check for firmware updates
+echo -e "$(date) - ${YELLOW}Checking for firmware updates...${NC}" | tee -a "$LOGFILE"
 sudo "$FWUPD_CMD" refresh | tee -a "$LOGFILE"
-if sudo "$FWUPD_CMD" get-updates | tee -a "$LOGFILE" | grep -q "No detected"; then
+
+FWUPD_UPDATES=$(sudo "$FWUPD_CMD" get-updates | grep -A3 'Devices with no available updates' | grep -v 'Devices with no available updates')
+
+if sudo "$FWUPD_CMD" get-updates | grep -q "No upgrades for"; then
   echo -e "${BLUE}No Change: No firmware updates available.${NC}" | tee -a "$LOGFILE"
 else
-  sudo "$FWUPD_CMD" update | tee -a "$LOGFILE"
+  echo -e "${GREEN}The following firmware updates are available:${NC}" | tee -a "$LOGFILE"
+  sudo "$FWUPD_CMD" get-updates | tee -a "$LOGFILE"
+
+  # Update system firmware
+  echo -e "$(date) - ${YELLOW}Updating system firmware...${NC}" | tee -a "$LOGFILE"
+  sudo "$FWUPD_CMD" update -y | tee -a "$LOGFILE"
   echo -e "${GREEN}Firmware updated successfully.${NC}" | tee -a "$LOGFILE"
 fi
 
