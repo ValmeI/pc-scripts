@@ -61,6 +61,22 @@ fi
 echo -e "$(date) - ${YELLOW}Creating a Timeshift backup...${NC}" | tee -a "$LOGFILE"
 sudo "$TIMESHIFT_CMD" --create --comments "Backup before system update" 2>>"$LOGFILE" | tee -a "$LOGFILE"
 
+# Retain only the latest 3 Timeshift snapshots
+echo -e "$(date) - ${YELLOW}Ensuring only the latest 3 Timeshift snapshots are retained...${NC}" | tee -a "$LOGFILE"
+SNAPSHOTS_DIR="/timeshift/snapshots"
+SNAPSHOTS_COUNT=$(ls -1 "$SNAPSHOTS_DIR" | wc -l)
+
+if [ "$SNAPSHOTS_COUNT" -gt 3 ]; then
+  SNAPSHOTS_TO_DELETE=$((SNAPSHOTS_COUNT - 3))
+  echo -e "$(date) - ${YELLOW}Deleting the oldest $SNAPSHOTS_TO_DELETE snapshots...${NC}" | tee -a "$LOGFILE"
+  ls -1t "$SNAPSHOTS_DIR" | tail -n "$SNAPSHOTS_TO_DELETE" | while read -r snapshot; do
+    sudo rm -rf "$SNAPSHOTS_DIR/$snapshot"
+    echo -e "$(date) - ${GREEN}Deleted snapshot: $snapshot${NC}" | tee -a "$LOGFILE"
+  done
+else
+  echo -e "$(date) - ${BLUE}No Change: 3 or fewer snapshots present; no deletion necessary.${NC}" | tee -a "$LOGFILE"
+fi
+
 # Check for internet connectivity
 if ! ping -c 1 google.com &> /dev/null; then
   echo -e "${RED}No internet connection. Please check your network settings.${NC}" | tee -a "$LOGFILE"
