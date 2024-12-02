@@ -24,7 +24,8 @@ trap 'echo -e "$(date) - ${RED}Script interrupted.${NC}" | tee -a "$LOGFILE"; ex
 
 # Check for root privileges
 if [ "$EUID" -ne 0 ]; then
-  echo -e "${RED}Please run as root${NC}" | tee -a "$LOGFILE"
+  echo -e "$(date) - 
+  ${RED}Please run as root${NC}" | tee -a "$LOGFILE"
   exit 1
 fi
 
@@ -41,7 +42,7 @@ for cmd in "$TIMESHIFT_CMD" "$SNAP_CMD" "$FLATPAK_CMD" "$FWUPD_CMD"; do
   if ! command -v "$cmd" &> /dev/null; then
     echo -e "$(date) - ${RED}Command $cmd is not available. Trying to install with $APT_CMD...${NC}" | tee -a "$LOGFILE"
     sudo "$APT_CMD" install "$cmd" -y || { 
-      echo -e "${RED}Failed to install $cmd with $APT_CMD. Attempting with apt-get...${NC}" | tee -a "$LOGFILE"
+      echo -e "$(date) - ${RED}Failed to install $cmd with $APT_CMD. Attempting with apt-get...${NC}" | tee -a "$LOGFILE"
       sudo apt-get install "$cmd" -y || { echo -e "${RED}Failed to install $cmd${NC}"; exit 1; }
     }
   fi
@@ -53,7 +54,7 @@ sudo dpkg --configure -a
 
 # Check for other package managers running
 if sudo fuser /var/lib/dpkg/lock-frontend &>/dev/null || sudo fuser /var/lib/dpkg/lock &>/dev/null; then
-  echo -e "${RED}Another package manager is running. Please close it and try again.${NC}" | tee -a "$LOGFILE"
+  echo -e "$(date) - ${RED}Another package manager is running. Please close it and try again.${NC}" | tee -a "$LOGFILE"
   exit 1
 fi
 
@@ -79,14 +80,14 @@ fi
 
 # Check for internet connectivity
 if ! ping -c 1 google.com &> /dev/null; then
-  echo -e "${RED}No internet connection. Please check your network settings.${NC}" | tee -a "$LOGFILE"
+  echo -e "$(date) - ${RED}No internet connection. Please check your network settings.${NC}" | tee -a "$LOGFILE"
   exit 1
 fi
 
 # Check for disk space (ensure at least 2GB free space)
 FREE_SPACE=$(df / | tail -1 | awk '{print $4}')
 if [ "$FREE_SPACE" -lt 2097152 ]; then
-  echo -e "${RED}Not enough disk space. At least 2GB free space is required.${NC}" | tee -a "$LOGFILE"
+  echo -e "$(date) - ${RED}Not enough disk space. At least 2GB free space is required.${NC}" | tee -a "$LOGFILE"
   exit 1
 fi
 
@@ -99,10 +100,10 @@ echo -e "$(date) - ${YELLOW}Checking for package upgrades...${NC}" | tee -a "$LO
 UPGRADE_LIST=$(apt list --upgradable 2>/dev/null | tail -n +2 | awk -F/ '{print $1}')
 
 if [ -z "$UPGRADE_LIST" ]; then
-  echo -e "${BLUE}No Change: No packages need upgrading.${NC}" | tee -a "$LOGFILE"
+  echo -e "$(date) - ${BLUE}No Change: No packages need upgrading.${NC}" | tee -a "$LOGFILE"
 else
-  echo -e "${GREEN}The following packages will be upgraded:${NC}" | tee -a "$LOGFILE"
-  echo "$UPGRADE_LIST" | tee -a "$LOGFILE"
+  echo -e "$(date) - ${GREEN}The following packages will be upgraded:${NC}" | tee -a "$LOGFILE"
+  echo "$(date) - $UPGRADE_LIST" | tee -a "$LOGFILE"
 fi
 
 # Upgrade packages
@@ -128,15 +129,15 @@ echo -e "$(date) - ${YELLOW}Checking for Snap package updates...${NC}" | tee -a 
 SNAP_UPGRADE_LIST=$(sudo "$SNAP_CMD" refresh --list | tail -n +2)
 
 if [ -z "$SNAP_UPGRADE_LIST" ]; then
-  echo -e "${BLUE}No Change: All Snap packages are up to date.${NC}" | tee -a "$LOGFILE"
+  echo -e "$(date) - ${BLUE}No Change: All Snap packages are up to date.${NC}" | tee -a "$LOGFILE"
 else
-  echo -e "${GREEN}The following Snap packages will be upgraded:${NC}" | tee -a "$LOGFILE"
-  echo "$SNAP_UPGRADE_LIST" | tee -a "$LOGFILE"
+  echo -e "$(date) - ${GREEN}The following Snap packages will be upgraded:${NC}" | tee -a "$LOGFILE"
+  echo "$(date) - $SNAP_UPGRADE_LIST" | tee -a "$LOGFILE"
 
   # Refresh Snap packages
   echo -e "$(date) - ${YELLOW}Refreshing Snap packages...${NC}" | tee -a "$LOGFILE"
   sudo "$SNAP_CMD" refresh | tee -a "$LOGFILE"
-  echo -e "${GREEN}Snap packages updated successfully.${NC}" | tee -a "$LOGFILE"
+  echo -e "$(date) - ${GREEN}Snap packages updated successfully.${NC}" | tee -a "$LOGFILE"
 fi
 
 # Check and update Flatpak packages if available
@@ -145,15 +146,15 @@ if command -v "$FLATPAK_CMD" &> /dev/null; then
   FLATPAK_UPGRADE_LIST=$("$FLATPAK_CMD" remote-ls --updates)
 
   if [ -z "$FLATPAK_UPGRADE_LIST" ]; then
-    echo -e "${BLUE}No Change: All Flatpak packages are up to date.${NC}" | tee -a "$LOGFILE"
+    echo -e "$(date) - ${BLUE}No Change: All Flatpak packages are up to date.${NC}" | tee -a "$LOGFILE"
   else
-    echo -e "${GREEN}The following Flatpak packages will be upgraded:${NC}" | tee -a "$LOGFILE"
-    echo "$FLATPAK_UPGRADE_LIST" | tee -a "$LOGFILE"
+    echo -e "$(date) - ${GREEN}The following Flatpak packages will be upgraded:${NC}" | tee -a "$LOGFILE"
+    echo "$(date) - $FLATPAK_UPGRADE_LIST" | tee -a "$LOGFILE"
 
     # Update Flatpak packages
     echo -e "$(date) - ${YELLOW}Updating Flatpak packages...${NC}" | tee -a "$LOGFILE"
     "$FLATPAK_CMD" update -y | tee -a "$LOGFILE"
-    echo -e "${GREEN}Flatpak packages updated successfully.${NC}" | tee -a "$LOGFILE"
+    echo -e "$(date) - ${GREEN}Flatpak packages updated successfully.${NC}" | tee -a "$LOGFILE"
   fi
 else
   echo -e "$(date) - ${YELLOW}Flatpak is not installed, skipping Flatpak updates.${NC}" | tee -a "$LOGFILE"
@@ -166,15 +167,15 @@ sudo "$FWUPD_CMD" refresh | tee -a "$LOGFILE"
 FWUPD_UPDATES=$(sudo "$FWUPD_CMD" get-updates | grep "│ Update")
 
 if [ -z "$FWUPD_UPDATES" ]; then
-  echo -e "${BLUE}No Change: No firmware updates available.${NC}" | tee -a "$LOGFILE"
+  echo -e "$(date) - ${BLUE}No Change: No firmware updates available.${NC}" | tee -a "$LOGFILE"
 else
-  echo -e "${GREEN}The following firmware updates are available:${NC}" | tee -a "$LOGFILE"
+  echo -e "$(date) - ${GREEN}The following firmware updates are available:${NC}" | tee -a "$LOGFILE"
   sudo "$FWUPD_CMD" get-updates | tee -a "$LOGFILE"
 
   # Update system firmware
   echo -e "$(date) - ${YELLOW}Updating system firmware...${NC}" | tee -a "$LOGFILE"
   sudo "$FWUPD_CMD" update -y | tee -a "$LOGFILE"
-  echo -e "${GREEN}Firmware updated successfully.${NC}" | tee -a "$LOGFILE"
+  echo -e "$(date) - ${GREEN}Firmware updated successfully.${NC}" | tee -a "$LOGFILE"
 fi
 
 echo -e "$(date) - ${GREEN}System update completed successfully.${NC}" | tee -a "$LOGFILE"
