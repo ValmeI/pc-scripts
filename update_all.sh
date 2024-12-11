@@ -164,9 +164,10 @@ fi
 echo -e "$(date) - ${YELLOW}Checking for firmware updates...${NC}" | tee -a "$LOGFILE"
 sudo "$FWUPD_CMD" refresh | tee -a "$LOGFILE"
 
-FWUPD_UPDATES=$(sudo "$FWUPD_CMD" get-updates | grep "│ Update")
+# Use JSON parsing to check for updates
+FWUPD_UPDATES=$(sudo "$FWUPD_CMD" get-updates --json | jq '.Devices | length')
 
-if [ -z "$FWUPD_UPDATES" ]; then
+if [ "$FWUPD_UPDATES" -eq 0 ]; then
   echo -e "$(date) - ${BLUE}No Change: No firmware updates available.${NC}" | tee -a "$LOGFILE"
 else
   echo -e "$(date) - ${GREEN}The following firmware updates are available:${NC}" | tee -a "$LOGFILE"
@@ -174,8 +175,11 @@ else
 
   # Update system firmware
   echo -e "$(date) - ${YELLOW}Updating system firmware...${NC}" | tee -a "$LOGFILE"
-  sudo "$FWUPD_CMD" update -y | tee -a "$LOGFILE"
-  echo -e "$(date) - ${GREEN}Firmware updated successfully.${NC}" | tee -a "$LOGFILE"
+  if sudo "$FWUPD_CMD" update -y | tee -a "$LOGFILE"; then
+    echo -e "$(date) - ${GREEN}Firmware updated successfully.${NC}" | tee -a "$LOGFILE"
+  else
+    echo -e "$(date) - ${RED}Firmware update failed. Check the logs above for details.${NC}" | tee -a "$LOGFILE"
+  fi
 fi
 
 echo -e "$(date) - ${GREEN}System update completed successfully.${NC}" | tee -a "$LOGFILE"

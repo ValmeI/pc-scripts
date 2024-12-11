@@ -1,19 +1,22 @@
 #!/bin/bash
 
 # Open DBeaver
-snap run dbeaver-ce &
+# snap run dbeaver-ce &
 
 # Open Visual Studio Code
-code &
+# code &
+
+# Open sublime-text
+/snap/bin/subl &
 
 # Open Chrome P42 Work profile
-google-chrome --profile-directory="Profile 1" &
+/usr/bin/google-chrome --profile-directory="Profile 1" &
 
 # Open Chrome Personal profile
-google-chrome --profile-directory="Default" &
+/usr/bin/google-chrome --profile-directory="Default" &
 
 # Open Terminal
-gnome-terminal &
+/usr/bin/gnome-terminal &
 
 # Open nemo files explorer
-nemo &
+/usr/bin/nemo &
