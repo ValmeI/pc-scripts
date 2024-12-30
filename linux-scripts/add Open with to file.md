@@ -38,6 +38,22 @@
     Selection=any
     Extensions=any;
   ```
+
+- **Cursor Action**:
+
+  ```bash
+  nano ~/.local/share/nemo/actions/cursor.nemo_action
+  ```
+
+- **Add this content to the file**:
+  ```bash
+    [Nemo Action]
+    Name=Open with Cursor IDE
+    Exec=/opt/cursor.appimage --no-sandbox %F
+    Comment=Open with Cursor AI IDE
+    Selection=any
+    Extensions=any;
+  ```
   
 ## 3. Save and Restart Nemo
 
