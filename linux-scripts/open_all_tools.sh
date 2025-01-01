@@ -15,8 +15,8 @@
 # Open Chrome Personal profile
 /usr/bin/google-chrome --profile-directory="Default" &
 
-# Open Terminal
-/usr/bin/gnome-terminal &
+# Open Terminal Ghostty
+/usr/bin/ghostty &
 
 # Open nemo files explorer
 /usr/bin/nemo &
