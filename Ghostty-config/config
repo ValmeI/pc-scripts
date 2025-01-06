@@ -1,4 +1,4 @@
 keybind = ctrl+c=copy_to_clipboard
 keybind = ctrl+v=paste_from_clipboard
-window-height = 50 // kõrgus
-window-width = 130 // laius
+window-height = 50
+window-width = 130
