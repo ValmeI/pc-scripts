@@ -54,9 +54,27 @@
     Selection=any
     Extensions=any;
   ```
+
+- **Windsurf Action**:
+  ```bash
+  nano ~/.local/share/nemo/actions/windsurf.nemo_action
+  ```
+
+- **Add this content to the file**: 
+
+  ```bash
+    [Nemo Action]
+    Name=Open with Windsurf
+    Exec=/usr/bin/windsurf %F
+    Comment=Open with Windsurf
+    Selection=any
+    Extensions=any;
+  ``` 
   
 ## 3. Save and Restart Nemo
 
   ```bash
     nemo -q && nemo &
   ```
+
+
