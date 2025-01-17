@@ -47,7 +47,8 @@ alias reloadcode='source ~/.config/Code/User/settings.json'
 
 
 # other aliases
-alias cat='bat --style=plain --paging=never'
+alias bat='batcat'
+alias cat='bat --paging=never --plain'
 alias grep='grep --color=auto'
 alias wind='windsurf'
 alias myip='curl ifconfig.me' # Get your public IP address
@@ -62,6 +63,13 @@ alias bl='black --line-length 120 .'
 # alias vpn_restart='sudo systemctl stop nordlayer.service && sudo systemctl start nordlayer.service'
 alias pipfreeze="pip freeze | grep -v 'types-requests' | grep -v 'black' | grep -v 'mypy' | grep -v 'icecream' >"
 
+
+#
+# Finds all directories (-type d).
+# For each directory, it checks if __init__.py already exists using [ ! -f ... ].
+# If it doesn't exist, it creates the file using touch.
+#
+alias init="python3 ~/pc-scripts/python-scripts/generate_init.py"
 
 
 # AUTOCOMPLETION
