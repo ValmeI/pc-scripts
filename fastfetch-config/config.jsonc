@@ -112,6 +112,12 @@
       "keyColor": "green"
     },
     {
+      "type": "command",
+      "key": " CPU Cores/Threads",  // CPU cores and threads icon
+      "keyColor": "green",
+      "text": "cores=$(lscpu | grep '^Core(s) per socket:' | awk '{print $4}'); threads=$(grep -c ^processor /proc/cpuinfo); echo Cores: $cores, Threads: $threads"
+    },
+    {
       "type": "gpu",
       "key": " GPU",  // GPU icon
       "keyColor": "green"
