@@ -44,10 +44,10 @@ alias reloadgit='source ~/.gitconfig'
 alias reloadssh='source ~/.ssh/config'
 alias reloadcode='source ~/.config/Code/User/settings.json'
 
-
+# also run for  symbolic link   'ln -sf /home/valme/pc-scripts/linux-scripts/.zshrc /home/valme/.zshrc'
 # other aliases
 alias port='function _port() { sudo ss -tulnp | grep ":$1"; }; _port'
-alias cd="z" # zoxide # populate all home dirs history to  "find "$HOME" -type d -print -exec zoxide add {} \; ""
+alias cd="z" # zoxide # populate all home dirs history to  'find "$HOME" -type d -print -exec zoxide add {} \; ' 
 alias bat='batcat'
 alias cat='bat --paging=never --plain'
 alias grep='grep --color=auto'
