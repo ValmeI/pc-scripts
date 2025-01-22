@@ -30,7 +30,6 @@ export SSH_AUTH_SOCK
 # for aws cli
 export PATH="$HOME/.local/bin/aws:$PATH"
 
-
 # Common Aliases for Opening Configuration Files
 alias openzs='code ~/.zshrc'
 alias openbs='code ~/.bashrc'
@@ -47,6 +46,8 @@ alias reloadcode='source ~/.config/Code/User/settings.json'
 
 
 # other aliases
+alias port='function _port() { sudo ss -tulnp | grep ":$1"; }; _port'
+alias cd="z" # zoxide # populate all home dirs history to  "find "$HOME" -type d -print -exec zoxide add {} \; ""
 alias bat='batcat'
 alias cat='bat --paging=never --plain'
 alias grep='grep --color=auto'

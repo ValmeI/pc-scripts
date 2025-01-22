@@ -8,7 +8,7 @@ BLUE="\033[0;34m" # For "No Change"
 NC="\033[0m" # No color
 
 # Log directory and file setup
-LOGDIR="$HOME/linux-scripts/script_logs"
+LOGDIR="./script_logs"
 LOGFILE="$LOGDIR/$(date +%Y%m%d_%H%M%S)_update.log"
 TIMESHIFT_CMD="timeshift"
 APT_CMD="apt-get"
