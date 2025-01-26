@@ -8,7 +8,7 @@ BLUE="\033[0;34m" # For "No Change"
 NC="\033[0m" # No color
 
 # Log directory and file setup
-LOGDIR="./script_logs"
+LOGDIR="./valme_system_update/script_logs"
 LOGFILE="$LOGDIR/$(date +%Y%m%d_%H%M%S)_update.log"
 TIMESHIFT_CMD="timeshift"
 APT_CMD="apt-get"
@@ -24,8 +24,7 @@ trap 'echo -e "$(date) - ${RED}Script interrupted.${NC}" | tee -a "$LOGFILE"; ex
 
 # Check for root privileges
 if [ "$EUID" -ne 0 ]; then
-  echo -e "$(date) - 
-  ${RED}Please run as root${NC}" | tee -a "$LOGFILE"
+  echo -e "$(date) - ${RED}Please run as root${NC}" | tee -a "$LOGFILE"
   exit 1
 fi
 
@@ -65,7 +64,7 @@ sudo "$TIMESHIFT_CMD" --create --comments "Backup before system update" 2>>"$LOG
 # Retain only the latest 3 Timeshift snapshots
 echo -e "$(date) - ${YELLOW}Ensuring only the latest 3 Timeshift snapshots are retained...${NC}" | tee -a "$LOGFILE"
 SNAPSHOTS_DIR="/timeshift/snapshots"
-SNAPSHOTS_COUNT=$(ls -1 "$SNAPSHOTS_DIR" | wc -l)
+SNAPSHOTS_COUNT=$(ls -1 "$SNAPSHOTS_DIR" 2>/dev/null | wc -l)
 
 if [ "$SNAPSHOTS_COUNT" -gt 3 ]; then
   SNAPSHOTS_TO_DELETE=$((SNAPSHOTS_COUNT - 3))
@@ -160,26 +159,46 @@ else
   echo -e "$(date) - ${YELLOW}Flatpak is not installed, skipping Flatpak updates.${NC}" | tee -a "$LOGFILE"
 fi
 
-# Check for firmware updates
-echo -e "$(date) - ${YELLOW}Checking for firmware updates...${NC}" | tee -a "$LOGFILE"
-sudo "$FWUPD_CMD" refresh | tee -a "$LOGFILE"
+##############################
+# FRIENDLY CAPSULES-UNSUPPORTED CHECK
+##############################
+echo -e "$(date) - ${YELLOW}Checking for firmware (fwupd) updates...${NC}" | tee -a "$LOGFILE"
 
-# Use JSON parsing to check for updates
-FWUPD_UPDATES=$(sudo "$FWUPD_CMD" get-updates --json | jq '.Devices | length')
+# 1. Capture the fwupd refresh output
+FWUPD_REFRESH_OUTPUT=$(sudo "$FWUPD_CMD" refresh --force 2>&1 | tee -a "$LOGFILE")
+
+# 2. Check how many firmware updates are available (via JSON)
+FWUPD_UPDATES=$(sudo "$FWUPD_CMD" get-updates --json 2>&1 | tee -a "$LOGFILE" | jq '.Devices | length')
 
 if [ "$FWUPD_UPDATES" -eq 0 ]; then
   echo -e "$(date) - ${BLUE}No Change: No firmware updates available.${NC}" | tee -a "$LOGFILE"
 else
-  echo -e "$(date) - ${GREEN}The following firmware updates are available:${NC}" | tee -a "$LOGFILE"
+  echo -e "$(date) - ${GREEN}Firmware updates are available for some devices:${NC}" | tee -a "$LOGFILE"
   sudo "$FWUPD_CMD" get-updates | tee -a "$LOGFILE"
 
-  # Update system firmware
-  echo -e "$(date) - ${YELLOW}Updating system firmware...${NC}" | tee -a "$LOGFILE"
-  if sudo "$FWUPD_CMD" update -y | tee -a "$LOGFILE"; then
-    echo -e "$(date) - ${GREEN}Firmware updated successfully.${NC}" | tee -a "$LOGFILE"
+  echo -e "$(date) - ${YELLOW}Updating system firmware via fwupd...${NC}" | tee -a "$LOGFILE"
+  
+  # 3. Capture the fwupd update output
+  FWUPD_UPDATE_OUTPUT=$(sudo "$FWUPD_CMD" update -y 2>&1 | tee -a "$LOGFILE")
+
+  # Combine for scanning
+  ALL_FWUPD_OUTPUT="$FWUPD_REFRESH_OUTPUT\n$FWUPD_UPDATE_OUTPUT"
+
+  # Check success/failure
+  # We'll rely on the exit code of the last command in the pipeline
+  FWUPD_EXIT_CODE=${PIPESTATUS[0]}
+  if [ "$FWUPD_EXIT_CODE" -eq 0 ]; then
+    echo -e "$(date) - ${GREEN}Firmware updated successfully (or no further action needed).${NC}" | tee -a "$LOGFILE"
   else
-    echo -e "$(date) - ${RED}Firmware update failed. Check the logs above for details.${NC}" | tee -a "$LOGFILE"
+    echo -e "$(date) - ${YELLOW}Firmware update partially failed or was not applicable.${NC}" | tee -a "$LOGFILE"
+  fi
+
+  # 4. Check specifically for "capsules-unsupported" in combined output
+  if echo "$ALL_FWUPD_OUTPUT" | grep -qi "capsules-unsupported"; then
+    echo -e "\n$(date) - ${YELLOW}NOTE: UEFI capsule updates are not supported or disabled on this system.${NC}" | tee -a "$LOGFILE"
+    echo -e "$(date) - ${YELLOW}BIOS/UEFI firmware won't update automatically via fwupd,${NC}" | tee -a "$LOGFILE"
+    echo -e "$(date) - ${YELLOW}but other device firmware (SSD, USB receivers, etc.) may still have been updated.${NC}\n" | tee -a "$LOGFILE"
   fi
 fi
 
-echo -e "$(date) - ${GREEN}System update completed successfully.${NC}" | tee -a "$LOGFILE"
+echo -e "$(date) - ${GREEN}System update completed successfully (with capsule updates ignored if unsupported).${NC}" | tee -a "$LOGFILE"
