@@ -168,7 +168,19 @@ echo -e "$(date) - ${YELLOW}Checking for firmware (fwupd) updates...${NC}" | tee
 FWUPD_REFRESH_OUTPUT=$(sudo "$FWUPD_CMD" refresh --force 2>&1 | tee -a "$LOGFILE")
 
 # 2. Check how many firmware updates are available (via JSON)
-FWUPD_UPDATES=$(sudo "$FWUPD_CMD" get-updates --json 2>&1 | tee -a "$LOGFILE" | jq '.Devices | length')
+FWUPD_UPDATES_OUTPUT=$(sudo "$FWUPD_CMD" get-updates --json 2>&1 | tee -a "$LOGFILE")
+
+# Extract JSON part from the output
+FWUPD_UPDATES_JSON=$(echo "$FWUPD_UPDATES_OUTPUT" | sed -n '/{/,$p')
+
+# Check if the output is valid JSON
+if echo "$FWUPD_UPDATES_JSON" | jq . >/dev/null 2>&1; then
+  FWUPD_UPDATES=$(echo "$FWUPD_UPDATES_JSON" | jq '.Devices | length')
+else
+  echo -e "$(date) - ${RED}Error: Failed to parse fwupd output as JSON.${NC}" | tee -a "$LOGFILE"
+  echo -e "$(date) - ${RED}FWUPD output:${NC}\n$FWUPD_UPDATES_OUTPUT" | tee -a "$LOGFILE"
+  FWUPD_UPDATES=0
+fi
 
 if [ "$FWUPD_UPDATES" -eq 0 ]; then
   echo -e "$(date) - ${BLUE}No Change: No firmware updates available.${NC}" | tee -a "$LOGFILE"
@@ -197,7 +209,6 @@ else
   if echo "$ALL_FWUPD_OUTPUT" | grep -qi "capsules-unsupported"; then
     echo -e "\n$(date) - ${YELLOW}NOTE: UEFI capsule updates are not supported or disabled on this system.${NC}" | tee -a "$LOGFILE"
     echo -e "$(date) - ${YELLOW}BIOS/UEFI firmware won't update automatically via fwupd,${NC}" | tee -a "$LOGFILE"
-    echo -e "$(date) - ${YELLOW}but other device firmware (SSD, USB receivers, etc.) may still have been updated.${NC}\n" | tee -a "$LOGFILE"
   fi
 fi
 
