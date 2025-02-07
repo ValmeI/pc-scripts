@@ -1,0 +1,41 @@
+[tool.ruff]
+# Match Pylint's max-line-length
+line-length = 120
+
+
+[tool.ruff.lint]
+# Enable all default rules (Ruff uses Flake8, Pylint, etc.)
+select = ["E", "F", "W", "PL"]  # Remove "I" to disable import sorting
+ignore = ["F401", "I001", "E501", "PLR1722"]  # Ignore unused import removal and import sorting and line length, 
+# Disable specific rules that match your Pylint ignore list
+#ignore = [
+#    "PLW0603", # broad-exception-raised (Pylint: broad-exception-raised)
+#    "PLW0703", # broad-exception-caught (Pylint: broad-exception-caught)
+#    "PLW1508", # not-callable (Pylint: not-callable)
+#    "PLW2901", # logging-fstring-interpolation (Pylint: logging-fstring-interpolation)
+#    "PLW1510", # raise-missing-from (Pylint: raise-missing-from)
+#    "PLR0913", # too-many-arguments (Not in your list but common in Pylint)
+#    "PLR0915", # too-many-statements (Pylint: Pylint complexity checks)
+#    "PLR0912", # too-many-branches (Pylint: Complexity checks)
+#    "E501",    # line-too-long (Handled by formatter)
+#    "F401",    # import-error (Pylint: import-error)
+#    "I001",    # wrong-import-order (Handled by formatter)
+#    "I002",    # ungrouped-imports (Pylint: ungrouped-imports)
+#    "I003",    # wrong-import-position (Pylint: wrong-import-position)
+#    "W291",    # trailing-whitespace (Pylint: trailing-whitespace)
+#    "PLR1722", # dangerous-default-value (Pylint: dangerous-default-value)
+#    "D100",    # missing-module-docstring (Pylint: missing-module-docstring)
+#    "D103",    # missing-function-docstring (Pylint: missing-function-docstring)
+#    "D101",    # missing-class-docstring (Pylint: missing-class-docstring)
+#    "N802",    # invalid-name (Pylint: invalid-name)
+#]
+
+# Exclude third-party and build directories
+exclude = [".venv", "venv", "env", ".git", "__pycache__", "build", "dist"]
+# Enable autofixing
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.format]
+# Enable auto-formatting
+line-ending = "lf"
