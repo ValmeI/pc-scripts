@@ -5,8 +5,14 @@ line-length = 120
 
 [tool.ruff.lint]
 # Enable all default rules (Ruff uses Flake8, Pylint, etc.)
-select = ["E", "F", "W", "PL"]  # Remove "I" to disable import sorting
-ignore = ["F401", "I001", "E501", "PLR1722"]  # Ignore unused import removal and import sorting and line length, 
+select = ["E", "F", "W", "PL"] # Remove "I" to disable import sorting
+ignore = [
+    "F401",    # F401: imported but unused
+    "I001",    # I001: import sorting
+    "E501",    # E501: line too long
+    "PLR2004", # PLR2004 Magic value used in comparison
+]
+
 # Disable specific rules that match your Pylint ignore list
 #ignore = [
 #    "PLW0603", # broad-exception-raised (Pylint: broad-exception-raised)

@@ -1,3 +1,4 @@
 script_logs
 nordlayer_connect.sh
 .DS_Store
+.ruff_cache
