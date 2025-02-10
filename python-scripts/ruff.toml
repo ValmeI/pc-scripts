@@ -1,0 +1,45 @@
+[lint]
+# Lint settings
+select = ["E", "F", "W", "PL", "D", "N", "I"]
+ignore = [
+    "PLW0603",  # broad-exception-raised
+    "PLW1508",  # not-callable
+    "PLW2901",  # logging-fstring-interpolation
+    "PLW1510",  # raise-missing-from
+    "PLR0913",  # too-many-arguments
+    "PLR0915",  # too-many-statements
+    "PLR0912",  # too-many-branches
+    "E501",     # line-too-long
+    "F401",     # import-error
+    "I001",     # wrong-import-order
+    "I002",     # ungrouped-imports
+    "W291",     # trailing-whitespace
+    "PLR1722",  # dangerous-default-value
+    "D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107", 
+    "D200", "D212", "D400", "D401", "D415",  # docstring rules
+    "N802",     # invalid-name
+    "E722",     # bare-except
+    "E402",     # module-import-not-at-top
+]
+
+exclude = [
+    ".venv",
+    "venv",
+    "env",
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+]
+
+fixable = ["ALL"]
+unfixable = []
+
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+skip-magic-trailing-comma = false
+preview = true
+one-line-expressions = false
+line-length = 88

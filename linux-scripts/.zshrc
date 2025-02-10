@@ -84,8 +84,8 @@ alias nano='code'
 alias py='python3'
 alias pyvers='python3 --version'
 alias bl='black --line-length 120 .'
-export RUFF_CONFIG=~/pc-scripts/python-scripts/pyproject.toml
-alias rr="rm -rf .ruff_cache && ruff check --fix . && ruff format ."
+export RUFF_CONFIG=~/pc-scripts/python-scripts/ruff.toml
+alias rr="rm -rf .ruff_cache && ruff check --fix . --output-format full && ruff format ."
 alias pipfreeze="pip freeze | grep -v 'types-requests' | grep -v 'black' | grep -v 'mypy' | grep -v 'icecream' >"
 alias init='python3 ~/pc-scripts/python-scripts/generate_init.py'   # Creates __init__.py in all subdirs
 
