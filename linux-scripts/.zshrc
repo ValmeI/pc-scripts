@@ -84,10 +84,11 @@ alias nano='code'
 alias py='python3'
 alias pyvers='python3 --version'
 alias bl='black --line-length 120 .'
-export RUFF_CONFIG=~/pc-scripts/python-scripts/ruff.toml
-alias rr="rm -rf .ruff_cache && ruff check --fix . --output-format full && ruff format ."
 alias pipfreeze="pip freeze | grep -v 'types-requests' | grep -v 'black' | grep -v 'mypy' | grep -v 'icecream' >"
 alias init='python3 ~/pc-scripts/python-scripts/generate_init.py'   # Creates __init__.py in all subdirs
+
+alias ssh_rmi_nas='ssh -p 2299 Morr@RMI_NAS'
+
 
 # ----------------------------------------------
 # Zsh autocompletion setup
@@ -168,3 +169,22 @@ precmd() {
         echo "Took $(( $(date +%s) - timer )) seconds"
     fi
 }
+
+# ----------------------------------------------
+# Automatically activate .venv if it exists in the current directory
+# ----------------------------------------------
+auto_activate_venv_on_startup() {
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        # Skip if already activated
+        return
+    fi
+    if [[ -f "./.venv/bin/activate" ]]; then
+        # Activate .venv in green
+        echo "\033[32mActivating virtual environment: $(pwd)/.venv\033[0m"
+        source "./.venv/bin/activate"
+        # Ensure .venv/bin is at the front of PATH
+        export PATH="${VIRTUAL_ENV}/bin:${PATH//$(pyenv root)\/shims:/}"
+    fi
+}
+# Run on terminal start
+auto_activate_venv_on_startup
