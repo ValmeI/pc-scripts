@@ -77,6 +77,19 @@ else
   echo -e "$(date) - ${BLUE}No Change: 3 or fewer snapshots present; no deletion necessary.${NC}" | tee -a "$LOGFILE"
 fi
 
+# Make zsh backup using cp command
+USER_HOME="/home/valme"
+BACKUP_ZSH_DIR="$USER_HOME/zsh_backups"
+mkdir -p "$BACKUP_ZSH_DIR"
+
+echo -e "$(date) - ${YELLOW}Creating a backup of .zshrc...${NC}" | tee -a "$LOGFILE"
+if cp "$USER_HOME/.zshrc" "$BACKUP_ZSH_DIR/.zshrc.bak.$(date +%F_%T)"; then
+    echo -e "$(date) - ${GREEN}Backup of .zshrc created successfully.${NC}" | tee -a "$LOGFILE"
+else
+    echo -e "$(date) - ${RED}Failed to create backup of .zshrc.${NC}" | tee -a "$LOGFILE"
+    exit 1
+fi
+
 # Check for internet connectivity
 if ! ping -c 1 google.com &> /dev/null; then
   echo -e "$(date) - ${RED}No internet connection. Please check your network settings.${NC}" | tee -a "$LOGFILE"

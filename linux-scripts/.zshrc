@@ -114,12 +114,6 @@ setopt HIST_VERIFY
 setopt EXTENDED_HISTORY
 
 # ----------------------------------------------
-# Keybindings for history substring search
-# ----------------------------------------------
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
-
-# ----------------------------------------------
 # Never beep
 # ----------------------------------------------
 setopt NO_BEEP
@@ -142,10 +136,6 @@ if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]]; then
     git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
 fi
 
-# zsh-syntax-highlighting
-if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]]; then
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
-fi
 
 # fzf-tab
 if [[ ! -d "$ZSH_CUSTOM/plugins/fzf-tab" ]]; then
@@ -178,12 +168,6 @@ plugins=(
 )
 
 # ----------------------------------------------
-# ZSH Syntax Highlighting + Autosuggestions
-# ----------------------------------------------
-source "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-source "$ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
-
-# ----------------------------------------------
 # Finally, load Oh My Zsh
 # ----------------------------------------------
 source "$ZSH/oh-my-zsh.sh"
@@ -203,3 +187,17 @@ precmd() {
         echo "Took $(( $(date +%s) - timer )) seconds"
     fi
 }
+# ----------------------------------------------
+# fzf history search, type history-search
+# ----------------------------------------------
+alias history-search="history | fzf --reverse"
+
+# ----------------------------------------------
+#  Find Running Processes by Name, e.g., psgrep python
+# ----------------------------------------------
+alias psgrep="ps aux | grep -v grep | grep -i --color=auto"
+
+# ----------------------------------------------
+# Backup .zshrc
+# ----------------------------------------------
+alias backupzs="cp ~/.zshrc ~/.zshrc.bak.$(date +%F_%T)"
