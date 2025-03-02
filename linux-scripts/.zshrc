@@ -131,15 +131,49 @@ zstyle ':omz:update' mode auto
 zstyle ':omz:update' frequency 13
 ENABLE_CORRECTION="true"
 
+# ----------------------------------------------
+# Install or update required Zsh plugins if missing
+# ----------------------------------------------
+mkdir -p "$ZSH_CUSTOM/plugins"
+
+# zsh-autosuggestions
+if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+fi
+
+# zsh-syntax-highlighting
+if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]]; then
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+fi
+
+# fzf-tab
+if [[ ! -d "$ZSH_CUSTOM/plugins/fzf-tab" ]]; then
+    git clone https://github.com/Aloxaf/fzf-tab "$ZSH_CUSTOM/plugins/fzf-tab"
+fi
+
+# zsh-completions
+if [[ ! -d "$ZSH_CUSTOM/plugins/zsh-completions" ]]; then
+    git clone https://github.com/zsh-users/zsh-completions "$ZSH_CUSTOM/plugins/zsh-completions"
+fi
+
+# fast-syntax-highlighting
+if [[ ! -d "$ZSH_CUSTOM/plugins/fast-syntax-highlighting" ]]; then
+    git clone https://github.com/zdharma-continuum/fast-syntax-highlighting "$ZSH_CUSTOM/plugins/fast-syntax-highlighting"
+fi
+source "$ZSH_CUSTOM/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+
+
 plugins=(
     git
+    fzf-tab
     zsh-autosuggestions
     you-should-use
     history-substring-search
-    zsh-syntax-highlighting
+    fast-syntax-highlighting
     command-not-found
     sudo
     gitfast
+    zsh-completions 
 )
 
 # ----------------------------------------------
