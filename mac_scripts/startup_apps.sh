@@ -7,15 +7,13 @@ open -na "DBeaver"
 open -na "Windsurf"
 
 # Open Chrome Personal Profile (Profile 1)
-open -na "Google Chrome" --args --profile-directory="Profile 1"
+open -na "Google Chrome Beta" --args --profile-directory="Profile 1"
 
 # Open Chrome Work Profile (Default)
 open -na "Google Chrome" --args --profile-directory="Default"
 
-# Open Terminal Ghostty with "t" command for multiple tabs on start
+# Open Terminal Ghostty
 open -na "Ghostty"
-sleep 1
-osascript -e 'tell application "System Events" to keystroke "t" using command down'
 
 # Open Slack
 open -na "Slack"
