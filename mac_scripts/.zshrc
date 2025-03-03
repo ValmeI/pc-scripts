@@ -142,10 +142,6 @@ if [ ! -d "$ZSH_CUSTOM/plugins/you-should-use" ]; then
     git clone https://github.com/MichaelAquilina/zsh-you-should-use "$ZSH_CUSTOM/plugins/you-should-use"
 fi
 
-if [ ! -d "$ZSH_CUSTOM/plugins/gitfast" ]; then
-    git clone https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/gitfast "$ZSH_CUSTOM/plugins/gitfast"
-fi
-
 
 plugins=(
     git
