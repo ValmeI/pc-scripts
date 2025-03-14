@@ -83,7 +83,7 @@ alias c='clear'
 alias nano='code'
 alias py='python3'
 alias pyvers='python3 --version'
-alias bl='black --line-length 120 .'
+alias bl='black --line-length 150 .'
 alias pipfreeze="pip freeze | grep -v 'types-requests' | grep -v 'black' | grep -v 'mypy' | grep -v 'icecream' >"
 alias init='python3 ~/pc-scripts/python-scripts/generate_init.py'   # Creates __init__.py in all subdirs
 
