@@ -2,7 +2,7 @@
 -- Bind Alt-TAB to type a specific string
 --------------------------------------------------------
 hs.hotkey.bind({"alt"}, "tab", function()
-    hs.eventtap.keyStrokes("Suur Parim")
+    hs.eventtap.keyStrokes("SuurTelekas90!")
 end)
 
 --------------------------------------------------------
@@ -40,6 +40,22 @@ end)
 hs.hotkey.bind({"ctrl", "alt"}, "down", function()
     hs.window.focusedWindow():centerOnScreen()
 end)
+
+--------------------------------------------------------
+-- use Delete key and send Cmd+Backspace in Finder
+--------------------------------------------------------
+deleteTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(event)
+    local keyCode = event:getKeyCode()
+    local isDelete = keyCode == hs.keycodes.map["forwarddelete"]
+
+    if isDelete and hs.application.frontmostApplication():name() == "Finder" then
+        hs.eventtap.keyStroke({"cmd"}, "delete", 0)
+        return true -- suppress the original Delete key
+    end
+end)
+
+deleteTap:start()
+
 
 --------------------------------------------------------
 -- Reload Hammerspoon configuration when files change
