@@ -18,6 +18,7 @@ cask "betterdisplay"
 cask "scroll-reverser"
 cask "google-chrome"       # Web browser
 cask "vlc"                 # Media player
+cask "dropbox"
 
 
 
