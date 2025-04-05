@@ -1,0 +1,23 @@
+# Terminal tools
+brew "git"
+brew "wget"
+brew "curl"
+brew "zsh-autosuggestions"
+brew "eza"
+brew "fzf"
+brew "btop"
+brew "zoxide"
+brew "bat"
+brew "mas"
+brew "thefuck"
+
+# GUI apps
+cask "visual-studio-code"
+cask "hammerspoon"
+cask "betterdisplay"
+cask "scroll-reverser"
+cask "google-chrome"       # Web browser
+cask "vlc"                 # Media player
+
+
+

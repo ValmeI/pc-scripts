@@ -1,3 +1,10 @@
+# -----------------------------------------------
+# Install Oh My Zsh if not already installed
+# -----------------------------------------------
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+fi
+
 # ----------------------------------------------
 # Path to your Oh My Zsh installation
 # ----------------------------------------------
@@ -195,3 +202,6 @@ export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/Library/Python/3.9/bin:$PATH"
 export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
+
+# Added by Windsurf
+export PATH="/Users/valme/.codeium/windsurf/bin:$PATH"
