@@ -2,7 +2,7 @@
 -- Bind Alt-TAB to type a specific string
 --------------------------------------------------------
 hs.hotkey.bind({"alt"}, "tab", function()
-    hs.eventtap.keyStrokes("SuurTelekas90!")
+    hs.eventtap.keyStrokes("mute")
 end)
 
 --------------------------------------------------------
@@ -11,6 +11,14 @@ end)
 hs.hotkey.bind({"alt"}, "q", function()
     hs.eventtap.keyStrokes("Lugupidamisega,\rIgnar Valme")
 end)
+
+--------------------------------------------------------
+-- Bind Alt-W for Isikukood
+--------------------------------------------------------
+hs.hotkey.bind({"alt"}, "W", function()
+    hs.eventtap.keyStrokes("39002190224")
+end)
+
 
 --------------------------------------------------------
 -- Reload Hammerspoon automatically when the config is saved
@@ -55,6 +63,37 @@ deleteTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(event)
 end)
 
 deleteTap:start()
+
+--------------------------------------------------------
+-- Bind Ctrl+Alt+X to perform Cmd+X (Cut)
+--------------------------------------------------------
+hs.hotkey.bind({"ctrl", "alt"}, "x", function()
+    hs.eventtap.keyStroke({"cmd"}, "x")
+end)
+
+
+--------------------------------------------------------
+-- Prevent rename in Finder when pressing Enter
+-- and open the file instead (Cmd + Down)
+--------------------------------------------------------
+
+local enterWatcher = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(event)
+    local keyCode = event:getKeyCode()
+    local isEnter = keyCode == hs.keycodes.map["return"]
+    local app = hs.application.frontmostApplication()
+
+    if isEnter and app:name() == "Finder" then
+        -- Delay a bit and then trigger Cmd + Down
+        hs.timer.doAfter(0.05, function()
+            hs.eventtap.keyStroke({"cmd"}, "down", 0)
+        end)
+        return true -- Suppress original Enter key (stops rename)
+    end
+
+    return false
+end)
+
+enterWatcher:start()
 
 
 --------------------------------------------------------
