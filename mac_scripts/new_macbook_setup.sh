@@ -53,6 +53,35 @@ log "${BLUE}Running Brewfile...${NC}"
 brew bundle --file="$HOME/pc-scripts/mac_scripts/Brewfile" || log "${RED}Failed to run Brewfile.${NC}"
 
 # ----------------------------------------------
+# Install Mac App Store Applications
+# ----------------------------------------------
+log "${BLUE}Installing Mac App Store applications...${NC}"
+
+masfile="$HOME/pc-scripts/mac_scripts/Masfile"
+if [ ! -f "$masfile" ]; then
+    log "${RED}Masfile not found at $masfile. Skipping Mac App Store app installation.${NC}"
+    exit 1
+fi
+
+while IFS= read -r line; do
+    app_id=$(echo "$line" | awk '{print $1}')
+    app_name=$(echo "$line" | sed "s/^[^#]*# *//; s/^ *//; s/ *$//")
+    [[ "$app_id" =~ ^#.*$ || -z "$app_id" ]] && continue # Skip comments and empty lines
+
+    log "${YELLOW}Checking if $app_name (ID: $app_id) is already installed...${NC}"
+
+    if find "/Applications" -iname "$app_name.app" | grep -q .; then
+        log "${GREEN}$app_name is already installed in /Applications. Skipping.${NC}"
+    else
+        log "${BLUE}Installing $app_name (ID: $app_id)...${NC}"
+        mas install "$app_id" || log "${RED}Failed to install $app_name (ID: $app_id). Please check if the app name matches the real app name in /Applications.${NC}"
+    fi
+
+done < "$masfile"
+
+log "${GREEN}Mac App Store applications installed successfully.${NC}"
+
+# ----------------------------------------------
 # Copy .zshrc to Home Directory
 # ----------------------------------------------
 log "${BLUE}Copying .zshrc to home directory...${NC}"
