@@ -95,6 +95,21 @@ end)
 
 enterWatcher:start()
 
+--------------------------------------------------------
+-- Map End key to Cmd + Right Arrow
+--------------------------------------------------------
+endKeyTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(event)
+    local keyCode = event:getKeyCode()
+    local isEndKey = keyCode == hs.keycodes.map["end"]
+
+    if isEndKey and hs.application.frontmostApplication():name() == "Finder" then
+        hs.eventtap.keyStroke({"cmd"}, "right", 0)
+        return true  -- suppress original End behavior
+    end
+end)
+
+endKeyTap:start()
+
 
 --------------------------------------------------------
 -- Reload Hammerspoon configuration when files change
