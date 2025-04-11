@@ -29,6 +29,19 @@ setopt HIST_SAVE_NO_DUPS          # Don’t save duplicate commands
 setopt HIST_IGNORE_SPACE          # Ignore commands that start with a space
 setopt HIST_FIND_NO_DUPS          # Don’t display duplicate commands in history search
 
+# ----------------------------------------------
+# Git switch branch with a slugified title
+# ----------------------------------------------
+# Usage: gsw_ticket "DATA-8112" "My Title"
+# This will create a new branch named "DATA-8112-my-title"
+# The title will be slugified (lowercase, spaces replaced with dashes)
+gsw_ticket() {
+  local prefix="$1"       # e.g. "DATA-8112"
+  shift                   # remove the first argument
+  local raw="${*}"        # the rest becomes the title
+  local slug=$(echo "$raw" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g' | sed -E 's/^-|-$//g')
+  git switch -c "${prefix}-${slug}"
+}
 
 # ----------------------------------------------
 # Alias for fastfetch (ff) + run it (if not vscode)
