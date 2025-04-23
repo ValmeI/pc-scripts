@@ -65,6 +65,13 @@ end)
 deleteTap:start()
 
 --------------------------------------------------------
+-- Home key = beginning of line everywhere
+--------------------------------------------------------
+hs.hotkey.bind({}, "home", function()
+    hs.eventtap.keyStroke({"cmd"}, "left") -- start of line
+end)
+
+--------------------------------------------------------
 -- Bind Ctrl+Alt+X to perform Cmd+X (Cut)
 --------------------------------------------------------
 hs.hotkey.bind({"ctrl", "alt"}, "x", function()
