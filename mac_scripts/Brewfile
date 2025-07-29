@@ -10,6 +10,7 @@ brew "zoxide"
 brew "bat"
 brew "mas"
 brew "thefuck"
+brew "fastfetch"
 
 # GUI apps
 cask "visual-studio-code"
