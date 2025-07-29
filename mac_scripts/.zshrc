@@ -87,7 +87,6 @@ alias pyvers='python3 --version'
 alias bl='black --line-length 120 .'
 alias pipfreeze="pip freeze | grep -v 'types-requests' | grep -v 'black' | grep -v 'mypy' | grep -v 'icecream' >"
 alias init='python3 ~/pc-scripts/python-scripts/generate_init.py'   # Creates __init__.py in all subdirs
-alias dbeaver='aws-vault exec default -- open /Applications/DBeaver.app' # Open DBeaver with aws-vault 
 
 # ----------------------------------------------
 # Zsh autocompletion setup
@@ -207,8 +206,6 @@ precmd() {
     fi
 }
 
-# Added by Windsurf
-export PATH="/Users/ignarvalme/.codeium/windsurf/bin:$PATH"
 
 export HOMEBREW_NO_ENV_HINTS=1
 export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"
@@ -216,5 +213,4 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/Library/Python/3.9/bin:$PATH"
 export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
 
-# Added by Windsurf
-export PATH="/Users/valme/.codeium/windsurf/bin:$PATH"
+

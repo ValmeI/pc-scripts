@@ -19,8 +19,8 @@ cask "scroll-reverser"
 cask "google-chrome"       # Web browser
 cask "vlc"                 # Media player
 # cask "dropbox" # not for works computer
-cask "onlyoffice"
-cask "monitorcontrol"   # Monitor control
+# cask "onlyoffice"
+# cask "monitorcontrol"   # Monitor control
 cask "paintbrush"
 cask "sublime-text"
 cask "swift-quit"
