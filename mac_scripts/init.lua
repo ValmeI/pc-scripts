@@ -125,3 +125,10 @@ function reloadConfig(files)
     hs.reload()
 end
 hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
+
+--------------------------------------------------------
+-- Remap Win(ctrl) + L to lock screen (globally)
+--------------------------------------------------------
+hs.hotkey.bind({"ctrl"}, "L", function()
+    hs.caffeinate.lockScreen()
+end)
