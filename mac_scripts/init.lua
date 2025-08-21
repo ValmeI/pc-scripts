@@ -1,14 +1,14 @@
 --------------------------------------------------------
--- Bind Alt-TAB to type a specific string
+-- Bind Ctrl(win key)-Q to type a specific string
 --------------------------------------------------------
-hs.hotkey.bind({"alt"}, "tab", function()
+hs.hotkey.bind({"alt"}, "q", function()
     hs.eventtap.keyStrokes("mute")
 end)
 
 --------------------------------------------------------
 -- Type my email address
 --------------------------------------------------------
-hs.hotkey.bind({"alt"}, "q", function()
+hs.hotkey.bind({"alt"}, "e", function()
     hs.eventtap.keyStrokes("Lugupidamisega,\rIgnar Valme")
 end)
 
@@ -127,8 +127,8 @@ end
 hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
 
 --------------------------------------------------------
--- Remap Win(ctrl) + L to lock screen (globally)
+-- Remap cmd + L to lock screen (globally) for WIN use ctrl
 --------------------------------------------------------
-hs.hotkey.bind({"ctrl"}, "L", function()
+hs.hotkey.bind({"cmd"}, "L", function()
     hs.caffeinate.lockScreen()
 end)

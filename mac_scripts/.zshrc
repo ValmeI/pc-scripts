@@ -61,6 +61,7 @@ export PATH="$HOME/.local/bin/aws:$PATH"
 # Common Aliases for Opening/Reloading Configs
 # ----------------------------------------------
 alias openzs='code ~/.zshrc'
+alias activatevenv='source .venv/bin/activate'
 alias opengit='code ~/.gitconfig'
 alias openssh='code ~/.ssh/config'
 alias opencode='code ~/Library/Application\ Support/Code/User/settings.json'
@@ -72,7 +73,6 @@ alias reloadcode='source ~/Library/Application\ Support/Code/User/settings.json'
 # ----------------------------------------------
 # Other Aliases
 # ----------------------------------------------
-alias lock='pmset displaysleepnow'  # Lock the screen
 alias gc='git clone'
 alias wind='windsurf'  # Open Windsurf (Alternative for VS Code)
 alias cd='z'  # Use zoxide
@@ -84,9 +84,12 @@ alias c='clear'
 alias nano='code'
 alias py='python3'
 alias pyvers='python3 --version'
-alias bl='black --line-length 120 .'
+alias blfull='black --line-length 150 .'
+alias bl='black --line-length 150 --skip-string-normalization $(git diff --name-only --diff-filter=ACM | grep -E '\.py$') $(git diff --cached --name-only --diff-filter=ACM | grep -E '\.py$')'
 alias pipfreeze="pip freeze | grep -v 'types-requests' | grep -v 'black' | grep -v 'mypy' | grep -v 'icecream' >"
 alias init='python3 ~/pc-scripts/python-scripts/generate_init.py'   # Creates __init__.py in all subdirs
+alias dockfix='killall Dock'
+
 
 # ----------------------------------------------
 # Zsh autocompletion setup
@@ -190,8 +193,8 @@ source "$ZSH/oh-my-zsh.sh"
 # ----------------------------------------------
 # eza for ls
 # ----------------------------------------------
-alias ls='eza -A --icons --group-directories-first'
-alias l='eza -lhAF --group-directories-first --icons --git'
+alias l='eza -A --icons --group-directories-first'
+alias ls='eza -lhAF --group-directories-first --icons --git'
 
 # ----------------------------------------------
 # Show execution time only if >2 seconds
@@ -211,6 +214,33 @@ export HOMEBREW_NO_ENV_HINTS=1
 export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/Library/Python/3.9/bin:$PATH"
-export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
 
 
+
+# pyenv config
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+
+# Git branch creation function with proper naming
+gnb() {
+  if [[ $# -lt 2 ]]; then
+    echo "Usage: gnb <TICKET> <Title...>"
+    return 1
+  fi
+
+  local ticket="$1"
+  shift
+  local title="$*"
+
+  # Keep ticket uppercase, slugify title with underscores
+  local slug_title
+  slug_title=$(echo "$title" | tr '[:upper:]' '[:lower:]' \
+    | sed -E 's/[^a-z0-9]+/_/g; s/_+/_/g; s/^_|_$//g')
+
+  local branch="${ticket:u}_${slug_title}"
+
+  git switch -c "$branch"
+  echo "→ Created and switched to branch: $branch"
+}
