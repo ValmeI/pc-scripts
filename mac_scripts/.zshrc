@@ -216,14 +216,17 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/Library/Python/3.9/bin:$PATH"
 
 
-
+# ----------------------------------------------
 # pyenv config
+# ----------------------------------------------
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 
+# ----------------------------------------------
 # Git branch creation function with proper naming
+# ----------------------------------------------
 gnb() {
   if [[ $# -lt 2 ]]; then
     echo "Usage: gnb <TICKET> <Title...>"
