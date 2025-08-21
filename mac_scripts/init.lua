@@ -1,7 +1,7 @@
 --------------------------------------------------------
 -- Bind Ctrl(win key)-Q to type a specific string
 --------------------------------------------------------
-hs.hotkey.bind({"alt"}, "q", function()
+hs.hotkey.bind({"ctrl"}, "tab", function()
     hs.eventtap.keyStrokes("mute")
 end)
 
