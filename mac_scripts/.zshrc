@@ -86,10 +86,9 @@ alias py='python3'
 alias pyvers='python3 --version'
 alias blfull='black --line-length 150 .'
 alias bl='black --line-length 150 --skip-string-normalization $(git diff --name-only --diff-filter=ACM | grep -E '\.py$') $(git diff --cached --name-only --diff-filter=ACM | grep -E '\.py$')'
-alias pipfreeze="pip freeze | grep -v 'types-requests' | grep -v 'black' | grep -v 'mypy' | grep -v 'icecream' >"
+alias pipfreeze="pip freeze | grep -v 'typed-ast' | grep -v 'tomli' | grep -v 'types-requests' | grep -v 'black' | grep -v 'mypy' | grep -v 'icecream' | grep -v 'typing-inspection' > requirements.txt"
 alias init='python3 ~/pc-scripts/python-scripts/generate_init.py'   # Creates __init__.py in all subdirs
 alias dockfix='killall Dock'
-
 
 # ----------------------------------------------
 # Zsh autocompletion setup
@@ -215,7 +214,6 @@ export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/Library/Python/3.9/bin:$PATH"
 
-
 # ----------------------------------------------
 # pyenv config
 # ----------------------------------------------
@@ -229,21 +227,40 @@ eval "$(pyenv init -)"
 # ----------------------------------------------
 gnb() {
   if [[ $# -lt 2 ]]; then
-    echo "Usage: gnb <TICKET> <Title...>"
+    echo "Usage: gnb <[type/]TICKET> <Title...>"
+    echo "e.g.:  gnb feature/DE-901 DEV EMR cluster and refactor"
     return 1
   fi
 
-  local ticket="$1"
+  local raw_ticket="$1"
   shift
   local title="$*"
 
-  # Keep ticket uppercase, slugify title with underscores
+  # Split optional type and ticket key
+  local type="" key="$raw_ticket"
+  if [[ "$raw_ticket" == */* ]]; then
+    type="${raw_ticket%%/*}"
+    key="${raw_ticket#*/}"
+  fi
+
+  # Normalize: type lowercase, key uppercase
+  if [[ -n "$type" ]]; then
+    type=$(echo "$type" | tr '[:upper:]' '[:lower:]')
+  fi
+  key=$(echo "$key" | tr '[:lower:]' '[:upper:]')
+
+  # Slugify title (lowercase, underscores)
   local slug_title
   slug_title=$(echo "$title" | tr '[:upper:]' '[:lower:]' \
     | sed -E 's/[^a-z0-9]+/_/g; s/_+/_/g; s/^_|_$//g')
 
-  local branch="${ticket:u}_${slug_title}"
+  # Compose branch name
+  local branch
+  if [[ -n "$type" ]]; then
+    branch="${type}/${key}_${slug_title}"
+  else
+    branch="${key}_${slug_title}"
+  fi
 
-  git switch -c "$branch"
-  echo "→ Created and switched to branch: $branch"
+  git switch -c "$branch" && echo "→ Created and switched to branch: $branch"
 }
