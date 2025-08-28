@@ -11,7 +11,6 @@ brew "bat"
 brew "mas"
 brew "thefuck"
 brew "fastfetch"
-brew "maccy"
 
 # GUI apps
 cask "visual-studio-code"
@@ -30,3 +29,5 @@ cask "ghostty"
 cask "sensiblesidebuttons"
 cask "alt-tab"
 cask "command-x"
+cask "maccy"
+cask "hiddenbar"
