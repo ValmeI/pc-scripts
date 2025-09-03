@@ -53,6 +53,11 @@ if [ "$TERM_PROGRAM" != "vscode" ]; then
 fi
 
 # ----------------------------------------------
+# Reset system notifications to prevent "background items added" notifications
+# ----------------------------------------------
+sfltool resetbtm
+
+# ----------------------------------------------
 # AWS CLI in ~/.local/bin/aws
 # ----------------------------------------------
 export PATH="$HOME/.local/bin/aws:$PATH"
