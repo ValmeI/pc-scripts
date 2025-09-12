@@ -87,6 +87,7 @@ alias bl='black --line-length 150 --skip-string-normalization $(git diff --name-
 alias pipfreeze="pip freeze | grep -v 'typed-ast' | grep -v 'tomli' | grep -v 'types-requests' | grep -v 'black' | grep -v 'mypy' | grep -v 'icecream' | grep -v 'typing-inspection' > requirements.txt"
 alias init='python3 ~/pc-scripts/python-scripts/generate_init.py'   # Creates __init__.py in all subdirs
 alias dockfix='killall Dock'
+alias speedtest='speedtest-cli'
 
 # ----------------------------------------------
 # Zsh autocompletion setup
