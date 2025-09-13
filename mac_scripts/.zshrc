@@ -29,19 +29,6 @@ setopt HIST_SAVE_NO_DUPS          # Don’t save duplicate commands
 setopt HIST_IGNORE_SPACE          # Ignore commands that start with a space
 setopt HIST_FIND_NO_DUPS          # Don’t display duplicate commands in history search
 
-# ----------------------------------------------
-# Git switch branch with a slugified title
-# ----------------------------------------------
-# Usage: gsw_ticket "DATA-8112" "My Title"
-# This will create a new branch named "DATA-8112-my-title"
-# The title will be slugified (lowercase, spaces replaced with dashes)
-gsw_ticket() {
-  local prefix="$1"       # e.g. "DATA-8112"
-  shift                   # remove the first argument
-  local raw="${*}"        # the rest becomes the title
-  local slug=$(echo "$raw" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g' | sed -E 's/^-|-$//g')
-  git switch -c "${prefix}-${slug}"
-}
 
 # ----------------------------------------------
 # Alias for fastfetch (ff) + run it (if not vscode)
@@ -54,6 +41,8 @@ fi
 
 # ----------------------------------------------
 # AWS CLI in ~/.local/bin/aws
+# ----------------------------------------------
+export PATH="$HOME/.local/bin/aws:$PATH"
 
 # ----------------------------------------------
 # Common Aliases for Opening/Reloading Configs
@@ -71,6 +60,7 @@ alias reloadcode='source ~/Library/Application\ Support/Code/User/settings.json'
 # ----------------------------------------------
 # Other Aliases
 # ----------------------------------------------
+alias lock='pmset displaysleepnow'  # Lock the screen
 alias gc='git clone'
 alias wind='windsurf'  # Open Windsurf (Alternative for VS Code)
 alias cd='z'  # Use zoxide
@@ -212,6 +202,10 @@ export HOMEBREW_NO_ENV_HINTS=1
 export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/Library/Python/3.9/bin:$PATH"
+#export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
+
+# Added by Windsurf
+export PATH="/Users/valme/.codeium/windsurf/bin:$PATH"
 
 # ----------------------------------------------
 # pyenv config
@@ -222,12 +216,17 @@ eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 
 # ----------------------------------------------
+# Aliases for SSH connections
+# ----------------------------------------------
+alias ssh_nas='ssh -p 2299 Morr@RMI_NAS'
+
+# ----------------------------------------------
 # Git branch creation function with proper naming
 # ----------------------------------------------
-gnb() {
+gsw_ticket() {
   if [[ $# -lt 2 ]]; then
-    echo "Usage: gnb <[type/]TICKET> <Title...>"
-    echo "e.g.:  gnb feature/DE-901 DEV EMR cluster and refactor"
+    echo "Usage: gsw_ticket <[type/]TICKET> <Title...>"
+    echo "e.g.:  gsw_ticket feature/DE-901 DEV EMR cluster and refactor"
     return 1
   fi
 
