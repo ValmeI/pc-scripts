@@ -82,6 +82,10 @@ if ! command -v speedtest-cli >/dev/null; then
     brew install speedtest-cli
 fi
 
+if ! brew list --cask | grep -q font-hack-nerd-font; then
+    brew install --cask font-hack-nerd-font
+fi
+
 alias gc='git clone'
 alias wind='windsurf'  # Open Windsurf (Alternative for VS Code)
 alias cd='z'  # Use zoxide
