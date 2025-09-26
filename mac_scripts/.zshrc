@@ -253,7 +253,7 @@ eval "$(direnv hook zsh)"
 # ----------------------------------------------
 # Show venv in right prompt (after theme loads)
 # ----------------------------------------------
-RPROMPT='$VENV_NAME'
+RPROMPT='%{$fg[blue]%}$VENV_NAME%{$reset_color%}'
 
 # ----------------------------------------------
 # Git branch creation function with proper naming
