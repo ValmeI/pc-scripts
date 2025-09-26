@@ -12,13 +12,19 @@ export ZSH="$HOME/.oh-my-zsh"
 export ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
 
 # ----------------------------------------------
-# Homebrew (macOS package manager)
+# Homebrew (macOS package manager) - Install if missing
 # ----------------------------------------------
+if ! command -v brew >/dev/null; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # ----------------------------------------------
-# Zoxide (smart cd replacement)
+# Zoxide (smart cd replacement) - Install if missing
 # ----------------------------------------------
+if ! command -v zoxide >/dev/null; then
+    brew install zoxide
+fi
 eval "$(zoxide init zsh)"
 
 # ----------------------------------------------
@@ -31,8 +37,11 @@ setopt HIST_FIND_NO_DUPS          # Don’t display duplicate commands in histor
 
 
 # ----------------------------------------------
-# Alias for fastfetch (ff) + run it (if not vscode)
+# Alias for fastfetch (ff) + run it (if not vscode) - Install if missing
 # ----------------------------------------------
+if ! command -v fastfetch >/dev/null; then
+    brew install fastfetch
+fi
 alias ff='fastfetch --config ~/pc-scripts/fastfetch-config/config.jsonc'
 
 if [ "$TERM_PROGRAM" != "vscode" ]; then
@@ -58,9 +67,21 @@ alias reloadssh='source ~/.ssh/config'
 alias reloadcode='source ~/Library/Application\ Support/Code/User/settings.json'
 
 # ----------------------------------------------
-# Other Aliases
+# Other Aliases - Install tools if missing
 # ----------------------------------------------
-alias lock='pmset displaysleepnow'  # Lock the screen
+if ! command -v bat >/dev/null; then
+    brew install bat
+fi
+if ! command -v eza >/dev/null; then
+    brew install eza
+fi
+if ! command -v black >/dev/null; then
+    brew install black
+fi
+if ! command -v speedtest-cli >/dev/null; then
+    brew install speedtest-cli
+fi
+
 alias gc='git clone'
 alias wind='windsurf'  # Open Windsurf (Alternative for VS Code)
 alias cd='z'  # Use zoxide
@@ -114,14 +135,14 @@ bindkey '^[[B' history-substring-search-down
 setopt NO_BEEP
 
 # ----------------------------------------------
-# Java configuration
+# Java configuration (kept Corretto 17, removed AdoptOpenJDK)
 # ----------------------------------------------
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-17.jdk/Contents/Home
 
 # ----------------------------------------------
 # Oh My Zsh + Theme + Plugins
 # ----------------------------------------------
-ZSH_THEME="agnoster"
+#ZSH_THEME="agnoster"
 zstyle ':omz:update' mode auto
 zstyle ':omz:update' frequency 13
 ENABLE_CORRECTION="true"
@@ -131,27 +152,25 @@ ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
 # Ensure plugin directory exists
 mkdir -p "$ZSH_CUSTOM/plugins"
 
-# Install missing plugins
-if [ ! -d "$ZSH_CUSTOM/plugins/fzf-tab" ]; then
-    git clone https://github.com/Aloxaf/fzf-tab "$ZSH_CUSTOM/plugins/fzf-tab"
+# Install missing plugins (runs once per session if missing)
+if [[ -z "$ZSH_PLUGINS_INSTALLED" ]]; then
+    if [ ! -d "$ZSH_CUSTOM/plugins/fzf-tab" ]; then
+        git clone https://github.com/Aloxaf/fzf-tab "$ZSH_CUSTOM/plugins/fzf-tab"
+    fi
+    if [ ! -d "$ZSH_CUSTOM/plugins/fast-syntax-highlighting" ]; then
+        git clone https://github.com/zdharma-continuum/fast-syntax-highlighting "$ZSH_CUSTOM/plugins/fast-syntax-highlighting"
+    fi
+    if [ ! -d "$ZSH_CUSTOM/plugins/zsh-completions" ]; then
+        git clone https://github.com/zsh-users/zsh-completions "$ZSH_CUSTOM/plugins/zsh-completions"
+    fi
+    if [ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
+        git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+    fi
+    if [ ! -d "$ZSH_CUSTOM/plugins/you-should-use" ]; then
+        git clone https://github.com/MichaelAquilina/zsh-you-should-use "$ZSH_CUSTOM/plugins/you-should-use"
+    fi
+    export ZSH_PLUGINS_INSTALLED=1
 fi
-
-if [ ! -d "$ZSH_CUSTOM/plugins/fast-syntax-highlighting" ]; then
-    git clone https://github.com/zdharma-continuum/fast-syntax-highlighting "$ZSH_CUSTOM/plugins/fast-syntax-highlighting"
-fi
-
-if [ ! -d "$ZSH_CUSTOM/plugins/zsh-completions" ]; then
-    git clone https://github.com/zsh-users/zsh-completions "$ZSH_CUSTOM/plugins/zsh-completions"
-fi
-
-if [ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
-    git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
-fi
-
-if [ ! -d "$ZSH_CUSTOM/plugins/you-should-use" ]; then
-    git clone https://github.com/MichaelAquilina/zsh-you-should-use "$ZSH_CUSTOM/plugins/you-should-use"
-fi
-
 
 plugins=(
     git
@@ -169,14 +188,22 @@ plugins=(
 )
 
 # ----------------------------------------------
-# ZSH Syntax Highlighting + Autosuggestions
-# ----------------------------------------------
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-
-# ----------------------------------------------
 # Finally, load Oh My Zsh
 # ----------------------------------------------
 source "$ZSH/oh-my-zsh.sh"
+
+# ----------------------------------------------
+# Now init Starship (after oh-my-zsh) Theme with config - Install if missing
+# ----------------------------------------------
+if ! command -v starship >/dev/null; then
+    brew install starship
+fi
+eval "$(starship init zsh)"
+# Generate Starship config if not present
+if [ ! -f ~/.config/starship.toml ]; then
+    mkdir -p ~/.config
+    starship preset catppuccin-powerline -o ~/.config/starship.toml
+fi
 
 # ----------------------------------------------
 # eza for ls
@@ -197,7 +224,6 @@ precmd() {
     fi
 }
 
-
 export HOMEBREW_NO_ENV_HINTS=1
 export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
@@ -216,9 +242,14 @@ eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 
 # ----------------------------------------------
-# Aliases for SSH connections
+# direnv config for auto-loading .envrc files in folders
 # ----------------------------------------------
-alias ssh_nas='ssh -p 2299 Morr@RMI_NAS'
+eval "$(direnv hook zsh)"
+
+# ----------------------------------------------
+# Show venv in right prompt (after theme loads)
+# ----------------------------------------------
+RPROMPT='$VENV_NAME'
 
 # ----------------------------------------------
 # Git branch creation function with proper naming
@@ -262,3 +293,17 @@ gsw_ticket() {
 
   git switch -c "$branch" && echo "→ Created and switched to branch: $branch"
 }
+
+# ----------------------------------------------
+# Added by Windsurf
+# ----------------------------------------------
+export PATH="/Users/ignarvalme/.codeium/windsurf/bin:$PATH"
+
+# ----------------------------------------------
+# So Pyenv can find zlib and bzip2
+# ----------------------------------------------
+export LDFLAGS="-L$(brew --prefix zlib)/lib -L$(brew --prefix bzip2)/lib -L$(brew --prefix ncurses)/lib"
+export CPPFLAGS="-I$(brew --prefix zlib)/include -I$(brew --prefix bzip2)/include -I$(brew --prefix ncurses)/include"
+export PKG_CONFIG_PATH="$(brew --prefix zlib)/lib/pkgconfig:$(brew --prefix bzip2)/lib/pkgconfig:$(brew --prefix ncurses)/lib/pkgconfig"
+export PATH="/opt/homebrew/opt/bzip2/bin:$PATH"
+export PATH="/opt/homebrew/opt/ncurses/bin:$PATH"
