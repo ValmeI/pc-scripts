@@ -22,8 +22,10 @@ $kotlin\
 $haskell\
 [](fg:green bg:sapphire)\
 $conda\
+$memory_usage\
 [](fg:sapphire bg:lavender)\
 $time\
+$battery\
 [ ](fg:lavender)\
 $cmd_duration\
 $line_break\
@@ -140,11 +142,36 @@ style = "fg:crust bg:sapphire"
 format = '[$symbol$environment ]($style)'
 ignore_base = false
 
+[memory_usage]
+symbol = "🐏"
+style = "bg:peach fg:crust"
+format = '[[ $symbol $ram ](fg:crust bg:peach)]($style)'
+disabled = false
+
 [time]
 disabled = false
 time_format = "%R"
 style = "bg:lavender"
 format = '[[  $time ](fg:crust bg:lavender)]($style)'
+
+[battery]
+full_symbol = "🔋"
+charging_symbol = "⚡"
+discharging_symbol = "💀"
+format = '[$symbol$percentage]($style)'
+disabled = false
+
+[[battery.display]]
+threshold = 10
+style = 'fg:crust bg:lavender'
+
+[[battery.display]]
+threshold = 30
+style = 'fg:crust bg:lavender'
+
+[[battery.display]]
+threshold = 100
+style = 'fg:crust bg:lavender'
 
 [line_break]
 disabled = true
