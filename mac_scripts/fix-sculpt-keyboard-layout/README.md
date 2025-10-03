@@ -24,12 +24,6 @@ This converts the binary plist file to XML format so you can edit it manually.
 Open the plist file with a text editor that has sudo privileges:
 
 ```bash
-sudo nano /Library/Preferences/com.apple.keyboardtype.plist
-```
-
-Or if you prefer using a GUI editor:
-
-```bash
 sudo open -a TextEdit /Library/Preferences/com.apple.keyboardtype.plist
 ```
 
