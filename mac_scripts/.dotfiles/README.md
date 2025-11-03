@@ -39,6 +39,31 @@ This creates symlinks in your home directory pointing back to these files.
 2. Changes are automatically reflected (symlinks!)
 3. Re-run `stow -t ~ ...` only if you add new packages or files
 
+## Migrating Existing Configs
+
+If you have existing dotfiles in `~` and want to move them into this stow structure:
+
+```bash
+cd ~/pc-scripts/mac_scripts/.dotfiles
+
+# 1) Create package directories
+mkdir -p zsh hammerspoon ghostty/.config/ghostty starship/.config pylintrc
+
+# 2) Move files into packages (use git mv if tracked in repo)
+mv ~/.zshrc zsh/
+mv ~/.hammerspoon hammerspoon/
+mv ~/.config/ghostty/config ghostty/.config/ghostty/
+mv ~/.config/starship.toml starship/.config/
+mv ~/.pylintrc pylintrc/
+
+# 3) Clean up empty dirs (optional)
+rmdir ~/.config/ghostty 2>/dev/null || true
+rmdir ~/.hammerspoon 2>/dev/null || true
+
+# 4) Apply stow to create symlinks
+stow -t ~ zsh hammerspoon ghostty starship pylintrc
+```
+
 ## Troubleshooting
 
 ### Conflict: file already exists
@@ -55,7 +80,7 @@ stow -t ~ package-name
 
 ### Adopt existing files into repo
 
-To move existing config files from `~` into this repo:
+Alternatively, use `--adopt` to move existing files from `~` into the repo:
 
 ```bash
 stow --adopt -t ~ package-name
