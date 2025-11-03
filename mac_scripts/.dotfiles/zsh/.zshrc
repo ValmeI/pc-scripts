@@ -56,7 +56,7 @@ export PATH="$HOME/.local/bin/aws:$PATH"
 # ----------------------------------------------
 # Common Aliases for Opening/Reloading Configs
 # ----------------------------------------------
-alias openzs='code ~/.zshrc'
+alias openzs='code ~/pc-scripts/mac_scripts/.dotfiles/zsh/.zshrc'
 alias activatevenv='source .venv/bin/activate'
 alias opengit='code ~/.gitconfig'
 alias openssh='code ~/.ssh/config'
@@ -203,11 +203,7 @@ if ! command -v starship >/dev/null; then
     brew install starship
 fi
 eval "$(starship init zsh)"
-# Generate Starship config if not present
-if [ ! -f ~/.config/starship.toml ]; then
-    mkdir -p ~/.config
-    starship preset catppuccin-powerline -o ~/.config/starship.toml
-fi
+# Starship config is managed via stow from ~/pc-scripts/mac_scripts/.dotfiles/starship/.config/starship.toml
 
 # ----------------------------------------------
 # eza for ls
