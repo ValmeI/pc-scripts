@@ -258,7 +258,7 @@ RPROMPT='%{$fg[blue]%}$VENV_NAME%{$reset_color%}'
 # ----------------------------------------------
 # Git branch creation function with proper naming
 # ----------------------------------------------
-gsw_ticket() {
+gnb() {
   if [[ $# -lt 2 ]]; then
     echo "Usage: gsw_ticket <[type/]TICKET> <Title...>"
     echo "e.g.:  gsw_ticket feature/DE-901 DEV EMR cluster and refactor"

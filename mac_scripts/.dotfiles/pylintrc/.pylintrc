@@ -1,0 +1,60 @@
+[MASTER]
+ignore=venv,.venv
+ignore-patterns=^tests?/.*,^scripts?/.*,^examples?/.*
+
+[FORMAT]
+max-line-length=120
+
+[REPORTS]
+score=no
+
+[MESSAGES CONTROL]
+disable=
+    # Docs / naming & common style
+    missing-module-docstring,
+    missing-function-docstring,
+    missing-class-docstring,
+    invalid-name,
+    line-too-long,
+    trailing-whitespace,
+    ungrouped-imports,
+    wrong-import-order,
+    wrong-import-position,
+    pointless-string-statement,
+    logging-not-lazy,
+    # Airflow-ish realities
+    import-outside-toplevel,
+    unspecified-encoding,
+    pointless-statement,
+    no-name-in-module,
+    #unused-argument,          # e.g. context params in @task
+    #unused-variable,          # XComArg / task handles bound but not read
+    no-member,                # decorators/operators confuse pylint (E1101)
+    import-error,             # providers present only in runtime image (E0401)
+    broad-exception-raised,
+    broad-exception-caught,
+    dangerous-default-value,
+    logging-fstring-interpolation,
+    raise-missing-from,
+    too-few-public-methods,
+    too-many-arguments,
+    duplicate-code,           # DAG patterns often repeat
+
+[TYPECHECK]
+ignored-modules=
+    airflow,
+    airflow.decorators,
+    airflow.models,
+    airflow.operators,
+    airflow.sensors,
+    airflow.providers,
+    airflow.hooks,
+    airflow.utils
+generated-members=__enter__,__exit__
+
+[BASIC]
+# Keep Airflow's short, conventional names from tripping rules (if you re-enable invalid-name later)
+good-names=_,e,op,ti,ts,ds,dag,rl,kw,ok
+
+[SIMILARITIES]
+min-similarity-lines=12

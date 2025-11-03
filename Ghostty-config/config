@@ -1,5 +1,0 @@
-keybind = ctrl+c=copy_to_clipboard
-keybind = ctrl+v=paste_from_clipboard
-window-height = 50
-window-width = 130
-font-family = Hack Nerd Font

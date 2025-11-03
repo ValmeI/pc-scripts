@@ -12,6 +12,7 @@ brew "mas"
 brew "thefuck"
 brew "fastfetch"
 brew "speedtest-cli"
+brew "stow"
 
 
 # Fonts

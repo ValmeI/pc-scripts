@@ -2,13 +2,13 @@
 -- Bind Ctrl(win key)-Q to type a specific string
 --------------------------------------------------------
 hs.hotkey.bind({"ctrl"}, "tab", function()
-    hs.eventtap.keyStrokes("mute")
+    hs.eventtap.keyStrokes("SuurTelekas90")
 end)
 
 --------------------------------------------------------
 -- Type my email address
 --------------------------------------------------------
-hs.hotkey.bind({"alt"}, "e", function()
+hs.hotkey.bind({"alt"}, "q", function()
     hs.eventtap.keyStrokes("Lugupidamisega,\rIgnar Valme")
 end)
 
