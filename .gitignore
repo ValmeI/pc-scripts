@@ -3,3 +3,6 @@ nordlayer_connect.sh
 .DS_Store
 .ruff_cache
 .vscode
+
+# Hammerspoon personal config
+mac_scripts/.dotfiles/hammerspoon/.hammerspoon/personal.lua

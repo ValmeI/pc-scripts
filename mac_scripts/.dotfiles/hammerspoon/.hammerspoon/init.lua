@@ -1,8 +1,13 @@
 --------------------------------------------------------
+-- Load personal data (gitignored)
+--------------------------------------------------------
+local personal = require("personal")
+
+--------------------------------------------------------
 -- Bind Ctrl(win key)-Q to type a specific string
 --------------------------------------------------------
 hs.hotkey.bind({"ctrl"}, "tab", function()
-    hs.eventtap.keyStrokes("SuurTelekas90")
+    hs.eventtap.keyStrokes(personal.mute_command)
 end)
 
 --------------------------------------------------------
@@ -16,7 +21,7 @@ end)
 -- Bind Alt-W for Isikukood
 --------------------------------------------------------
 hs.hotkey.bind({"alt"}, "W", function()
-    hs.eventtap.keyStrokes("39002190224")
+    hs.eventtap.keyStrokes(personal.isikukood)
 end)
 
 

@@ -1,0 +1,6 @@
+-- Personal sensitive data template
+-- Copy this file to personal.lua and fill in your own values
+return {
+    mute_command = "your_mute_command",
+    isikukood = "your_personal_id_number"
+}
