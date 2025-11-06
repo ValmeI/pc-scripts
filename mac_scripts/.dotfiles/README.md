@@ -94,6 +94,17 @@ stow --adopt -t ~ package-name
 
 This will move the files from `~` into the stow package directory.
 
+## Hammerspoon Personal Config
+
+The `personal.lua` file contains sensitive data (like personal ID numbers) and is gitignored. 
+
+**On initial setup:**
+1. Copy the template: `cp hammerspoon/.hammerspoon/personal.lua.template hammerspoon/.hammerspoon/personal.lua`
+2. Edit `personal.lua` with your actual values
+3. Create symlink: `ln -sf ~/pc-scripts/mac_scripts/.dotfiles/hammerspoon/.hammerspoon/personal.lua ~/.hammerspoon/personal.lua`
+
+The symlink is needed because stow creates individual file symlinks, not directory symlinks.
+
 ## Quick Reference
 
 ```bash
@@ -102,6 +113,9 @@ stow -t ~ zsh hammerspoon ghostty starship pylintrc-personal
 
 # Apply all packages (work)
 stow -t ~ zsh hammerspoon ghostty starship pylintrc-work
+
+# Symlink Hammerspoon personal config (after creating personal.lua)
+ln -sf ~/pc-scripts/mac_scripts/.dotfiles/hammerspoon/.hammerspoon/personal.lua ~/.hammerspoon/personal.lua
 
 # Remove symlinks (if needed)
 stow -D -t ~ zsh hammerspoon ghostty starship pylintrc-personal
