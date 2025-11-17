@@ -103,6 +103,7 @@ alias pipfreeze="pip freeze | grep -v 'typed-ast' | grep -v 'tomli' | grep -v 't
 alias init='python3 ~/pc-scripts/python-scripts/generate_init.py'   # Creates __init__.py in all subdirs
 alias dockfix='killall Dock'
 alias speedtest='speedtest-cli'
+alias master-update='git checkout master && git pull origin master'
 
 # ----------------------------------------------
 # Zsh autocompletion setup
